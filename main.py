@@ -11,9 +11,7 @@ from packages.ardruino_serial_connection.measurement import run_measurement
 from packages.user_interface.graph_window import open_graph_window
 
 # ... [Dina tidigare funktioner, inklusive run_calibration och run_measurement]
-threshold = 1.0  # Exempel på tröskelvärde, ändra efter behov
 serial_connection = None  # Global variabel
-num_readings = 1
 
 try:
     calibrated = read_calibrated_values()
@@ -68,23 +66,36 @@ def choose_log_file():
     if filename:
         log_file_path.set(filename)
 
+# Justera padx och pady för att ge mer utrymme
+padx = 10
+pady = 5
+
+# Definiera färgpalett
+background_color = '#f0f0f0'
+button_color = '#add8e6'
+button_active_color = '#87CEEB'
+highlight_color = '#90ee90'
+danger_color = '#ff6347'
 
 # Create GUI
 root = tk.Tk()
-root.geometry("800x800")
+root.geometry("900x800")
 root.title("Lastcell v1.0")
 root.configure(bg='#f0f0f0')  # Ljus bakgrund
+root.iconbitmap('favicon.ico')  # Om du har en applikationsikon
+
 
 # Define fonts
-default_font = ('Helvetica', 12)
-button_font = ('Helvetica', 14, 'bold')
+default_font = ('Arial', 12)
+title_font = ('Arial', 14, 'bold')
+button_font = ('Arial', 12, 'bold')
 
 # Set dialogue window title (what it says at the top)
 label = tk.Label(root, text="Lastcell", font=('times new roman', 40))
 label.pack(padx=30, pady=30)
 
 # Ny etikett för programinformation
-info_text = "Detta program används för att mäta och logga vikter.\n Koden finns här: https://github.com/petterkarlsson65/load_cell"
+info_text = "Detta program används för att mäta och logga vikter från en lastcell via en A/D-omvandlare HX711 som läses av en Arduino.\n Koden finns här: https://github.com/petterkarlsson65/load_cell"
 info_label = tk.Label(root, text=info_text, font=('Arial', 12))  # Använd en mindre fontstorlek för info-texten
 info_label.pack(padx=20, pady=10)  # Justera paddings efter behov
 
@@ -159,6 +170,15 @@ readings_entry = tk.Entry(settings_frame, font=default_font)
 readings_entry.pack(side='left')
 readings_entry.insert(0, "1")  # Standardvärde
 tooltip = Tooltip(readings_entry, "Medelvärde beräknas av antalet mätpunkter")
+
+
+# Förbättra utseendet på knappar och labels
+connect_button.configure(bg=button_color, activebackground=button_active_color)
+calibrate_button.configure(bg=highlight_color, activebackground=button_active_color)
+weigh_button.configure(bg=highlight_color, activebackground=button_active_color)
+log_button.configure(bg=highlight_color, activebackground=button_active_color)
+stop_button.configure(bg=danger_color, activebackground=button_active_color)
+show_graph_button.configure(bg=danger_color, activebackground=button_active_color)
 
 
 # Textbox section
