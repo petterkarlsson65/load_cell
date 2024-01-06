@@ -228,5 +228,10 @@ show_graph_button.configure(bg=highlight_color, activebackground=button_active_c
 textbox = tk.Text(root, height=5, font=default_font)
 textbox.pack(fill='both', expand=True, padx=10, pady=5)
 
+# Notis längst ned på sidan
+footer_text = "Petter Karlsson - Soltorgsgymnasiet - 2024"
+footer_label = tk.Label(root, text=footer_text, font=('Arial', 8), bg=background_color)
+footer_label.pack(side='bottom', anchor='e', padx=10, pady=5)
+
 # Run main-loop
 root.mainloop()
