@@ -37,5 +37,4 @@ Denna applikation är utvecklad med Python och använder Tkinter för grafiskt a
 Programmet kan kompileras till en .exe-fil med ``pyinstaller``:
 
 ``
-$ pyinstaller --onefile --name=LoadCellApp --icon=favicon.ico  main.py
-``
+pyinstaller --onefile --name=LoadCellApp --icon=favicon.ico --add-data="favicon.ico;." main.py``
