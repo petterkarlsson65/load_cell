@@ -32,3 +32,10 @@ För att använda Lastcell, följ dessa grundläggande steg:
 
 ## Utveckling
 Denna applikation är utvecklad med Python och använder Tkinter för grafiskt användargränssnitt. Ytterligare bibliotek som används inkluderar `matplotlib` för grafhantering och `pyserial` för seriell kommunikation.
+
+## Kompilering till .exe
+Programmet kan kompileras till en .exe-fil med ``pyinstaller``:
+
+``
+$ pyinstaller --onefile --name=LoadCellApp --icon=favicon.ico  main.py
+``
