@@ -59,14 +59,12 @@ def start_logging(log_file_path, textbox, serial_connection, num_readings, k, m,
     Notes:
         Funktionen kontrollerar om användaren har valt en loggfil innan den startar loggningen.
     """
-    global is_logging_active
     if not log_file_path.get():
         messagebox.showwarning("Ingen fil vald", "Vänligen välj en fil att logga till.")
         return  # Avsluta funktionen om ingen filväg är angiven
 
     global stop_logging
     stop_logging = False
-    is_logging_active = True  # Uppdatera loggningstillståndet
     add_text_to_textbox(textbox, "Loggning startad.\n")
     log_data(serial_connection, num_readings, k, m, threshold, log_file_path, textbox, root)  # Starta loggningen
 
