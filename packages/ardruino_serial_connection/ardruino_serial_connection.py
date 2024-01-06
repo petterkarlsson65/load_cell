@@ -1,6 +1,7 @@
 import serial
 import numpy as np
 
+
 def connect_serial(port, add_text_callback):
     """
     Upprättar en seriell anslutning till en angiven port.
@@ -21,6 +22,7 @@ def connect_serial(port, add_text_callback):
     try:
         # Försök stänga en befintlig anslutning (om den finns)
         serial_connection.close()
+        wait(1)
     except Exception:
         pass
 
@@ -33,6 +35,7 @@ def connect_serial(port, add_text_callback):
         add_text_callback(f"Kunde inte ansluta: {e}\n")
 
     return serial_connection
+
 
 def read_from_arduino(serial_connection):
     """

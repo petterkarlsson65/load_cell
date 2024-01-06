@@ -1,7 +1,9 @@
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, Frame
 import sys
 import os
+import webbrowser
+from tkinter import PhotoImage
 
 from packages.tooltip import Tooltip
 from packages.ardruino_serial_connection.ardruino_serial_connection import connect_serial
@@ -12,22 +14,22 @@ from packages.user_interface.core import add_text_to_textbox
 from packages.ardruino_serial_connection.measurement import run_measurement
 from packages.user_interface.graph_window import open_graph_window
 
-# ... [Dina tidigare funktioner, inklusive run_calibration och run_measurement]
 serial_connection = None  # Global variabel
-
-try:
-    calibrated = read_calibrated_values()
-    k = calibrated["k"]
-    m = calibrated["m"]
-    print(f"Loaded calibrated values (k={k}, m={m})")
-except Exception:
-    pass
 
 
 def connect(textbox, port_entry):
-    global serial_connection
+    global serial_connection, k, m
     serial_connection = connect_serial(port_entry.get(), lambda text: add_text_to_textbox(textbox, text))
+    try:
+        calibrated = read_calibrated_values()
+        k = calibrated["k"]
+        m = calibrated["m"]
+        add_text_to_textbox(textbox,f"Loaded calibrated values (k={k}, m={m})\n")
+    except Exception as e:
+        add_text_to_textbox(textbox, f"Kalibrering krävs! Fel: {e}\n")
 
+def open_link(url):
+    webbrowser.open_new(url)
 
 # Define functions for what should happen when buttons are pressed
 def on_weigh_click():
@@ -51,6 +53,7 @@ def on_stop_click():
 
 def on_calibration_click():
     global k, m
+    num_readings = int(readings_entry.get())
     k, m = run_calibration_gui(serial_connection, num_readings, textbox)
 
 
@@ -62,23 +65,20 @@ def on_show_graph_click():
     open_graph_window(log_file_path, root)
 
 
-def choose_log_file():
+def on_choose_log_file_click():
     filename = filedialog.asksaveasfilename(defaultextension=".txt",
                                             filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
     if filename:
         log_file_path.set(filename)
 
 
-# Justera padx och pady för att ge mer utrymme
-padx = 10
-pady = 5
-
-# Definiera färgpalett
+# Define color-palette
 background_color = '#f0f0f0'
 button_color = '#add8e6'
 button_active_color = '#87CEEB'
 highlight_color = '#90ee90'
 danger_color = '#ff6347'
+
 
 def resource_path(relative_path):
     """ Hämtar den absoluta sökvägen till resursen för kompilerade applikationer. """
@@ -93,12 +93,11 @@ def resource_path(relative_path):
 
 icon_path = resource_path('favicon.ico')
 
-
 # Create GUI
 root = tk.Tk()
 root.geometry("900x800")
 root.title("Lastcell v1.0")
-root.configure(bg='#f0f0f0')  # Ljus bakgrund
+root.configure(bg=background_color)
 root.iconbitmap(icon_path)
 
 # Define fonts
@@ -106,25 +105,49 @@ default_font = ('Arial', 12)
 title_font = ('Arial', 14, 'bold')
 button_font = ('Arial', 12, 'bold')
 
-# Set dialogue window title (what it says at the top)
-label = tk.Label(root, text="Lastcell", font=('times new roman', 40))
-label.pack(padx=30, pady=30)
 
-# Ny etikett för programinformation
-info_text = "Detta program används för att mäta och logga vikter från en lastcell via en A/D-omvandlare HX711 som läses av en Arduino.\n Koden finns här: https://github.com/petterkarlsson65/load_cell"
-info_label = tk.Label(root, text=info_text, font=('Arial', 12))  # Använd en mindre fontstorlek för info-texten
-info_label.pack(padx=20, pady=10)  # Justera paddings efter behov
+# Skapa en Frame för logga och titel
+header_frame = Frame(root, bg=background_color)
+header_frame.pack(fill='x', padx=10, pady=10)
+
+# Frame för logga
+logo_frame = Frame(header_frame, bg=background_color)
+logo_frame.pack(side='left', padx=10, pady=10)
+
+# Logga
+logo_path = resource_path('transparent_icon_120_120.png')
+logo_image = PhotoImage(file=logo_path)
+logo_label = tk.Label(logo_frame, image=logo_image, bg=background_color)
+logo_label.pack(side='top', padx=10, pady=10)
+
+# Frame för titel och beskrivande text
+title_text_frame = Frame(header_frame, bg=background_color)
+title_text_frame.pack(side='left', padx=10, pady=10)
+
+# Titel
+label = tk.Label(title_text_frame, text="Lastcell: Balkböjare", font=title_font, bg=background_color)
+label.pack(side='top', padx=10, pady=10)
+
+# Beskrivande text under titeln
+info_text_widget = tk.Text(title_text_frame, height=4, wrap='word', background=root.cget('bg'), relief='flat', font=default_font, cursor="arrow")
+info_text_widget.insert(tk.END, "Detta program används för att mäta och logga vikter från en lastcell via en A/D-omvandlare HX711 som läses av en Arduino.\nKoden finns här: ")
+info_text_widget.insert(tk.INSERT, "GitHub", ("link",))
+info_text_widget.tag_config("link", foreground="blue", underline=1)
+info_text_widget.tag_bind("link", "<Button-1>", lambda e: open_link("https://github.com/petterkarlsson65/load_cell"))
+info_text_widget.configure(state="disabled", inactiveselectbackground=info_text_widget.cget("selectbackground"))
+info_text_widget.pack(side='top', padx=10, pady=10)
+
 
 # Connection section
-connection_frame = tk.LabelFrame(root, text="Anslutning", font=default_font, bg='#f0f0f0', padx=10, pady=10)
+connection_frame = tk.LabelFrame(root, text="Anslutning", font=default_font, padx=10, pady=10)
 connection_frame.pack(fill='x', padx=10, pady=5)
 
-connect_button = tk.Button(connection_frame, text="Anslut", command=on_connect_click, font=button_font, bg="#add8e6")
+connect_button = tk.Button(connection_frame, text="Anslut", command=on_connect_click, font=button_font)
 connect_button.pack(side='right')
 tooltip = Tooltip(connect_button, "Klicka här för att ansluta")
 
 # COM-port section
-port_label = tk.Label(connection_frame, text="COM-port:", font=default_font, bg='#f0f0f0')
+port_label = tk.Label(connection_frame, text="COM-port:", font=default_font)
 port_label.pack(side='left')
 
 port_entry = tk.Entry(connection_frame, font=default_font)
@@ -134,52 +157,51 @@ port_entry.insert(0, "COM3")
 # Log-file selection section
 log_file_path = tk.StringVar()  # Skapar en variabel för att lagra loggfilens sökväg
 
-log_file_frame = tk.LabelFrame(root, text="Loggfil", font=default_font, bg='#f0f0f0', padx=10, pady=10)
+log_file_frame = tk.LabelFrame(root, text="Loggfil", font=default_font, padx=10, pady=10)
 log_file_frame.pack(fill='x', padx=10, pady=5)
 
 log_file_entry = tk.Entry(log_file_frame, textvariable=log_file_path, font=default_font)
 log_file_entry.pack(side='left', fill='x', expand=True)
 
-log_file_button = tk.Button(log_file_frame, text="Bläddra...", command=choose_log_file, font=button_font, bg="#add8e6")
+log_file_button = tk.Button(log_file_frame, text="Bläddra...", command=on_choose_log_file_click, font=button_font)
 log_file_button.pack(side='left')
 
 # Control button section
-button_frame = tk.Frame(root, bg='#f0f0f0', padx=10, pady=10)
+button_frame = tk.Frame(root, padx=10, pady=10)
 button_frame.pack(fill='x', padx=10, pady=5)
 
-calibrate_button = tk.Button(button_frame, text="Kalibrera", command=on_calibration_click, font=button_font,
-                             bg="#90ee90")
+calibrate_button = tk.Button(button_frame, text="Kalibrera", command=on_calibration_click, font=button_font)
 calibrate_button.pack(side='left', fill='x', expand=True)
 tooltip = Tooltip(calibrate_button, "Kalibrera: Ange vikten i [kg]")
 
-weigh_button = tk.Button(button_frame, text="Väga", command=on_weigh_click, font=button_font, bg="#90ee90")
+weigh_button = tk.Button(button_frame, text="Väga", command=on_weigh_click, font=button_font)
 weigh_button.pack(side='left', fill='x', expand=True)
 
-log_button = tk.Button(button_frame, text="Logga", command=on_log_click, font=button_font, bg="#90ee90")
+log_button = tk.Button(button_frame, text="Logga", command=on_log_click, font=button_font)
 log_button.pack(side='left', fill='x', expand=True)
 tooltip = Tooltip(log_button, "Loggar endast vid vikt över tröskelvärde")
 
-stop_button = tk.Button(button_frame, text="Stopp", command=on_stop_click, font=button_font, bg="#ff6347")
+stop_button = tk.Button(button_frame, text="Sluta logga", command=on_stop_click, font=button_font)
 stop_button.pack(side='left', fill='x', expand=True)
 tooltip = Tooltip(stop_button, "Avsluta loggning")
 
-show_graph_button = tk.Button(button_frame, text="Visa Graf", command=on_show_graph_click, font=button_font,
-                              bg="#ff6347")
+show_graph_button = tk.Button(button_frame, text="Visa Graf", command=on_show_graph_click, font=button_font)
 show_graph_button.pack(side='left', fill='x', expand=True)
 tooltip = Tooltip(show_graph_button, "Plotta mätvärden i vald log-fil")
 
 # Threshold section
-settings_frame = tk.LabelFrame(root, text="Settings", font=default_font, bg='#f0f0f0', padx=10, pady=10)
+settings_frame = tk.LabelFrame(root, text="Inställningar", font=default_font, padx=10, pady=10)
 settings_frame.pack(fill='x', padx=10, pady=5)
 
-threshold_label = tk.Label(settings_frame, text="Tröskelvärde [kg]:", font=default_font, bg='#f0f0f0')
+threshold_label = tk.Label(settings_frame, text="Tröskelvärde [kg]:", font=default_font)
 threshold_label.pack(side='left')
 
 threshold_entry = tk.Entry(settings_frame, font=default_font)
 threshold_entry.pack(side='left')
 threshold_entry.insert(0, "1.0")  # Standardvärde
+tooltip = Tooltip(threshold_entry, "Loggning sker endast om absolutbeloppet av vikten överstiger tröskelvärdet")
 
-readings_label = tk.Label(settings_frame, text="Antal mätpunkter:", font=default_font, bg='#f0f0f0')
+readings_label = tk.Label(settings_frame, text="Antal mätpunkter:", font=default_font)
 readings_label.pack(side='left')
 
 readings_entry = tk.Entry(settings_frame, font=default_font)
@@ -187,13 +209,14 @@ readings_entry.pack(side='left')
 readings_entry.insert(0, "1")  # Standardvärde
 tooltip = Tooltip(readings_entry, "Medelvärde beräknas av antalet mätpunkter")
 
-# Förbättra utseendet på knappar och labels
+# Set colors of buttons
 connect_button.configure(bg=button_color, activebackground=button_active_color)
+log_file_button.configure(bg=button_color, activebackground=button_active_color)
 calibrate_button.configure(bg=highlight_color, activebackground=button_active_color)
 weigh_button.configure(bg=highlight_color, activebackground=button_active_color)
 log_button.configure(bg=highlight_color, activebackground=button_active_color)
 stop_button.configure(bg=danger_color, activebackground=button_active_color)
-show_graph_button.configure(bg=danger_color, activebackground=button_active_color)
+show_graph_button.configure(bg=highlight_color, activebackground=button_active_color)
 
 # Textbox section
 textbox = tk.Text(root, height=5, font=default_font)
