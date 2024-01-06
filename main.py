@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
+import sys
+import os
 
 from packages.tooltip import Tooltip
 from packages.ardruino_serial_connection.ardruino_serial_connection import connect_serial
@@ -49,7 +51,7 @@ def on_stop_click():
 
 def on_calibration_click():
     global k, m
-    k,m = run_calibration_gui(serial_connection, num_readings, textbox)
+    k, m = run_calibration_gui(serial_connection, num_readings, textbox)
 
 
 def on_connect_click():
@@ -66,6 +68,7 @@ def choose_log_file():
     if filename:
         log_file_path.set(filename)
 
+
 # Justera padx och pady för att ge mer utrymme
 padx = 10
 pady = 5
@@ -77,13 +80,26 @@ button_active_color = '#87CEEB'
 highlight_color = '#90ee90'
 danger_color = '#ff6347'
 
+def resource_path(relative_path):
+    """ Hämtar den absoluta sökvägen till resursen för kompilerade applikationer. """
+    try:
+        # PyInstaller skapar en temporär mapp och lagrar sökvägen i _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+
+icon_path = resource_path('favicon.ico')
+
+
 # Create GUI
 root = tk.Tk()
 root.geometry("900x800")
 root.title("Lastcell v1.0")
 root.configure(bg='#f0f0f0')  # Ljus bakgrund
-root.iconbitmap('favicon.ico')  # Om du har en applikationsikon
-
+root.iconbitmap(icon_path)
 
 # Define fonts
 default_font = ('Arial', 12)
@@ -171,7 +187,6 @@ readings_entry.pack(side='left')
 readings_entry.insert(0, "1")  # Standardvärde
 tooltip = Tooltip(readings_entry, "Medelvärde beräknas av antalet mätpunkter")
 
-
 # Förbättra utseendet på knappar och labels
 connect_button.configure(bg=button_color, activebackground=button_active_color)
 calibrate_button.configure(bg=highlight_color, activebackground=button_active_color)
@@ -179,7 +194,6 @@ weigh_button.configure(bg=highlight_color, activebackground=button_active_color)
 log_button.configure(bg=highlight_color, activebackground=button_active_color)
 stop_button.configure(bg=danger_color, activebackground=button_active_color)
 show_graph_button.configure(bg=danger_color, activebackground=button_active_color)
-
 
 # Textbox section
 textbox = tk.Text(root, height=5, font=default_font)
