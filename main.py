@@ -34,17 +34,23 @@ def open_link(url):
 # Define functions for what should happen when buttons are pressed
 def on_weigh_click():
     global num_readings, k, m
-    num_readings = int(readings_entry.get())
-    measurement = run_measurement(serial_connection, num_readings, k, m)
-    add_text_to_textbox(textbox, f"Mätt: {measurement:.3f} kg\n")
+    try:
+        num_readings = int(readings_entry.get())
+        measurement = run_measurement(serial_connection, num_readings, k, m)
+        add_text_to_textbox(textbox, f"Mätt: {measurement:.3f} kg\n")
+    except ValueError:
+        add_text_to_textbox(textbox, "Ogiltigt värde för antal mätpunkter. Ange ett heltal.\n")
 
 
 def on_log_click():
     global threshold, num_readings, k, m
-    threshold = float(threshold_entry.get())
-    num_readings = int(readings_entry.get())
-    start_logging(log_file_path, textbox, serial_connection, num_readings, k, m, threshold, root)
-    add_text_to_textbox(textbox, "Loggning startad. Tryck 'q' för att avsluta.\n")
+    try:
+        threshold = float(threshold_entry.get())
+        num_readings = int(readings_entry.get())
+        start_logging(log_file_path, textbox, serial_connection, num_readings, k, m, threshold, root)
+        add_text_to_textbox(textbox, "Loggning startad. Tryck 'q' för att avsluta.\n")
+    except ValueError:
+        add_text_to_textbox(textbox, "Ogiltigt värde för tröskelvärde eller antal mätpunkter.\n")
 
 
 def on_stop_click():
@@ -54,7 +60,7 @@ def on_stop_click():
 def on_calibration_click():
     global k, m
     num_readings = int(readings_entry.get())
-    k, m = run_calibration_gui(serial_connection, num_readings, textbox)
+    k, m = run_calibration_gui(serial_connection, num_readings, textbox, root)
 
 
 def on_connect_click():

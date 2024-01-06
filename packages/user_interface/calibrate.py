@@ -4,7 +4,7 @@ from packages.ardruino_serial_connection.ardruino_serial_connection import read_
 from packages.ardruino_serial_connection.calibration import calibrate_scale
 from packages.user_interface.core import add_text_to_textbox
 
-def run_calibration_gui(serial_connection, num_readings, textbox):
+def run_calibration_gui(serial_connection, num_readings, textbox, root):
     """
     Kör en GUI-baserad kalibreringsprocess för en våg ansluten via en seriell port.
 
@@ -28,10 +28,14 @@ def run_calibration_gui(serial_connection, num_readings, textbox):
     """
     global k, m  # Använd globala variabler för att spara kalibrerade värden
     from tkinter import simpledialog
-    _ = simpledialog.askfloat("Kalibrering", "Nollställ vågen och klicka på OK")
-    zero_reading = read_average(serial_connection, num=num_readings)
+    _ = simpledialog.askfloat("Kalibrering", "Nollställ vågen och klicka på OK", parent=root)
 
-    weight_answer = simpledialog.askfloat("Kalibrering", "Lägg på en känd vikt och skriv värdet i kg:")
+    try:
+        zero_reading = read_average(serial_connection, num=num_readings)
+    except Exception as e:
+        add_text_to_textbox(textbox, f"Kolla så att du är ansluten till COM-porten, fel: {e}.")
+
+    weight_answer = simpledialog.askfloat("Kalibrering", "Lägg på en känd vikt och skriv värdet i kg:", parent=root)
 
     weight = float(weight_answer)
 
