@@ -2,6 +2,24 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
+from tkinter import messagebox
+from tkinter import filedialog
+
+
+def save_graph(fig):
+    """
+    Öppnar en dialogruta för att spara den aktuella grafen som en bildfil.
+
+    Args:
+        fig (matplotlib.figure.Figure): Figure-objektet som innehåller grafen som ska sparas.
+    """
+    filetypes = [('PNG-bilder', '*.png'), ('Alla filer', '*.*')]
+    filename = filedialog.asksaveasfilename(title="Spara grafen som", initialfile='graph.png', filetypes=filetypes)
+    if filename:
+        if not filename.endswith('.png'):
+            filename += '.png'
+        fig.savefig(filename)
+        messagebox.showinfo("Sparad", f"Grafen har sparats som {filename}")
 
 
 def update_graph(fig, ax, line, log_file_path):
@@ -91,8 +109,13 @@ def open_graph_window(log_file_path, root):
     ax.grid(True)
 
     # Knapp för att uppdatera grafen
-    update_button = tk.Button(graph_window, text="Uppdatera Graf", command=lambda: update_graph(fig, ax, line, log_file_path))
+    update_button = tk.Button(graph_window, text="Uppdatera Graf",
+                              command=lambda: update_graph(fig, ax, line, log_file_path))
     update_button.pack()
+
+    # Knapp för att spara grafen
+    save_button = tk.Button(graph_window, text="Spara Bild", command=lambda: save_graph(fig))
+    save_button.pack()
 
     canvas = FigureCanvasTkAgg(fig, master=graph_window)
     canvas_widget = canvas.get_tk_widget()
