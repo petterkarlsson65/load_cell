@@ -84,7 +84,7 @@ label = tk.Label(root, text="Lastcell", font=('times new roman', 40))
 label.pack(padx=30, pady=30)
 
 # Ny etikett för programinformation
-info_text = "Detta program används för att mäta och logga vikter.\n Koden finns här http://github.com/petter.karlsson65/..."
+info_text = "Detta program används för att mäta och logga vikter.\n Koden finns här: https://github.com/petterkarlsson65/load_cell"
 info_label = tk.Label(root, text=info_text, font=('Arial', 12))  # Använd en mindre fontstorlek för info-texten
 info_label.pack(padx=20, pady=10)  # Justera paddings efter behov
 
