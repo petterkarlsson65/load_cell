@@ -2,7 +2,7 @@ import os
 import json
 from packages.ardruino_serial_connection.ardruino_serial_connection import read_average
 from packages.ardruino_serial_connection.calibration import calibrate_scale
-from packages.user_interface.core import add_text_to_textbox
+from packages.user_interface.utils import add_text_to_textbox
 
 def run_calibration_gui(serial_connection, num_readings, textbox, root):
     """

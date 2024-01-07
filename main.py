@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import filedialog, Frame
 import sys
 import os
-import webbrowser
 from tkinter import PhotoImage
 
 from packages.tooltip import Tooltip
@@ -10,7 +9,7 @@ from packages.ardruino_serial_connection.ardruino_serial_connection import conne
 from packages.ardruino_serial_connection.calibration import read_calibrated_values
 from packages.user_interface.calibrate import run_calibration_gui
 from packages.user_interface.logging import start_logging, stop_logging
-from packages.user_interface.core import add_text_to_textbox
+from packages.user_interface.utils import add_text_to_textbox, open_link
 from packages.ardruino_serial_connection.measurement import run_measurement
 from packages.user_interface.graph_window import open_graph_window
 
@@ -28,8 +27,6 @@ def connect(textbox, port_entry):
     except Exception as e:
         add_text_to_textbox(textbox, f"Kalibrering krävs! Fel: {e}\n")
 
-def open_link(url):
-    webbrowser.open_new(url)
 
 # Define functions for what should happen when buttons are pressed
 def on_weigh_click():

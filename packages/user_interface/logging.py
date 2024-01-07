@@ -1,4 +1,4 @@
-from packages.user_interface.core import add_text_to_textbox
+from packages.user_interface.utils import add_text_to_textbox
 from packages.ardruino_serial_connection.measurement import run_measurement
 from datetime import datetime
 
