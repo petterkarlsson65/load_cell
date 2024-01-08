@@ -149,7 +149,7 @@ info_text_widget.pack(side='top', padx=10, pady=10)
 
 
 # Connection section
-connection_frame = tk.LabelFrame(root, text="Anslutning", font=default_font, padx=10, pady=10)
+connection_frame = tk.LabelFrame(root, text="Anslutning", font=default_font, padx=10, pady=10, bg=background_color)
 connection_frame.pack(fill='x', padx=10, pady=5)
 
 connect_button = tk.Button(connection_frame, text="Anslut", command=on_connect_click, font=button_font)
@@ -157,7 +157,7 @@ connect_button.pack(side='right')
 tooltip = Tooltip(connect_button, "Klicka här för att ansluta")
 
 # COM-port section
-port_label = tk.Label(connection_frame, text="COM-port:", font=default_font)
+port_label = tk.Label(connection_frame, text="COM-port:", font=default_font, bg=background_color)
 port_label.pack(side='left')
 
 port_entry = tk.Entry(connection_frame, font=default_font)
@@ -167,7 +167,7 @@ port_entry.insert(0, "COM3")
 # Log-file selection section
 log_file_path = tk.StringVar()  # Skapar en variabel för att lagra loggfilens sökväg
 
-log_file_frame = tk.LabelFrame(root, text="Loggfil", font=default_font, padx=10, pady=10)
+log_file_frame = tk.LabelFrame(root, text="Loggfil", font=default_font, padx=10, pady=10, bg=background_color)
 log_file_frame.pack(fill='x', padx=10, pady=5)
 
 log_file_entry = tk.Entry(log_file_frame, textvariable=log_file_path, font=default_font)
@@ -177,7 +177,7 @@ log_file_button = tk.Button(log_file_frame, text="Bläddra...", command=on_choos
 log_file_button.pack(side='left')
 
 # Control button section
-button_frame = tk.Frame(root, padx=10, pady=10)
+button_frame = tk.Frame(root, padx=10, pady=10, bg=background_color)
 button_frame.pack(fill='x', padx=10, pady=5)
 
 calibrate_button = tk.Button(button_frame, text="Kalibrera", command=on_calibration_click, font=button_font)
@@ -200,10 +200,10 @@ show_graph_button.pack(side='left', fill='x', expand=True)
 tooltip = Tooltip(show_graph_button, "Plotta mätvärden i vald log-fil")
 
 # Threshold section
-settings_frame = tk.LabelFrame(root, text="Inställningar", font=default_font, padx=10, pady=10)
+settings_frame = tk.LabelFrame(root, text="Inställningar", font=default_font, padx=10, pady=10, bg=background_color)
 settings_frame.pack(fill='x', padx=10, pady=5)
 
-threshold_label = tk.Label(settings_frame, text="Tröskelvärde [kg]:", font=default_font)
+threshold_label = tk.Label(settings_frame, text="Tröskelvärde [kg]:", font=default_font, bg=background_color)
 threshold_label.pack(side='left')
 
 threshold_entry = tk.Entry(settings_frame, font=default_font)
@@ -211,7 +211,7 @@ threshold_entry.pack(side='left')
 threshold_entry.insert(0, "1.0")  # Standardvärde
 tooltip = Tooltip(threshold_entry, "Loggning sker endast om absolutbeloppet av vikten överstiger tröskelvärdet")
 
-readings_label = tk.Label(settings_frame, text="Antal mätpunkter:", font=default_font)
+readings_label = tk.Label(settings_frame, text="Antal mätpunkter:", font=default_font, bg=background_color)
 readings_label.pack(side='left')
 
 readings_entry = tk.Entry(settings_frame, font=default_font)
