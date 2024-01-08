@@ -1,3 +1,4 @@
+import platform
 import tkinter as tk
 from tkinter import filedialog, Frame
 import sys
@@ -94,14 +95,20 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
-icon_path = resource_path('favicon.ico')
 
 # Create GUI
 root = tk.Tk()
 root.geometry("900x800")
 root.title("Lastcell v1.0")
 root.configure(bg=background_color)
-root.iconbitmap(icon_path)
+
+if platform.system() == 'Windows':
+    icon_path = resource_path('favicon.ico')
+    root.iconbitmap(icon_path)
+else:
+    icon_path = resource_path('transparent_icon_120_120.png')
+    img = PhotoImage(file=icon_path)
+    root.tk.call('wm', 'iconphoto', root._w, img)
 
 # Define fonts
 default_font = ('Arial', 12)
